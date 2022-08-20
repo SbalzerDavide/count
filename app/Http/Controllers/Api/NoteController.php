@@ -8,27 +8,12 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 
-use App\Folder;
+use App\Note;
 use App\User;
-use App\Notes;
 
 
-class FolderController extends Controller
+class NoteController extends Controller
 {
-    // per proteggere la rotta da autenticazione
-    // non credo funzioni perchè dovrei passare il token nella chiamata di rete
-    // token che però non conosco in vue ma solo in blade
-    // tanto vale passare l'id dell'utente tramite vue
-    // public function __construct()
-    // {
-    //     // da trasferire nel web.php per maggior chiarezza?
-    //     $this->middleware('auth');
-    // }
-
-
-    // dato che non devo fare un controllo di autenticazione, che ho assodato non posso fare da vue, posso più semplicemente fare un controllo di corrispondenza tra id utente (is_user) e nome utente abbinato. li passere criptati con un semplice stringify e encode da js e poi decripto i dati in php e faccio passare la richiesta solo se l'id corrisponde a il nome utente salvato su db
-
-
     /**
      * Display a listing of the resource.
      *
@@ -39,25 +24,26 @@ class FolderController extends Controller
         $data = $request->all();
         // recupero dati facendo un decode di quello che ho passato nella chiamata
         $userAuthString = base64_decode($data["userInfo"], true);
+        $idFolder = $data["idFolder"];
         $userAuth = json_decode($userAuthString, true);
         $userId = intval($userAuth["userId"]);
         $userName = $userAuth["userName"];
         $user = DB::table('users')
             ->where('users.id', $userId)
             ->get();
-        $folders;
+        $notes;
         // verifico che i dati di di e email conmbacino con quelli del db
         if ($user[0]->email === $userName){
             // nel caso in cui coincidono cerco le cartelle
             // è una simulazione di autenticazione lato server
             // non posso fare nativa perchè i dati di auth li conosce solo laravel e non vue
-            $folders = DB::table('folders')
-            ->where('folders.user_id', $userId)
+            $notes = DB::table('notes')
+            ->where('notes.folder_id', $idFolder)
             ->get();
         }
 
         return response()
-            ->json($folders);
+            ->json($notes);
     }
 
     /**
@@ -79,15 +65,19 @@ class FolderController extends Controller
     public function store(Request $request)
     {
         $data = $request->all();
+        // dd($data);
         
-        // la validazione dei dati la farò eventualmente lato client
+        // // la validazione dei dati la farò eventualmente lato client
         
         //save in DB
-        $folder = new Folder;
-        $folder->name = $data['name'];
-        $folder->user_id = $data['id'];        
+        $note = new Note;
+        $note->title = $data['title'];
+        $note->type = $data['type'];
+        $note->star = $data['star'];
+        $note->content = $data['content'];
+        $note->folder_id = $data['folder_id'];        
         
-        $saved = $folder->save();
+        $saved = $note->save();
         
         if($saved){
             return response()
@@ -103,27 +93,13 @@ class FolderController extends Controller
      */
     public function show($id)
     {
-        // dd($id);
-        // id arrivato
-        // autenticazione non attiva
-        // per gestire autenticazione nel modo un cui ho fatto dovrei non avere le crud impostate in questo modo  ma dovrei gestirle io personalizzate per poter passare sempre tutti i parametri
-        // in questo caso sarebbero divise semplicemente tra get e post e le indicazioni più specifiche sull'azione da fare sarebbero passate nei parametri della chiamata
-        // non male come idea 
-        // accedo alla table che contiene i dettagli delle singole folder
-
-
-        // questa richiesta delle note è gia stata gestita, con auth, anche nel controller di note
-        $notes = DB::table('notes')
-        ->where('notes.folder_id', $id)
-        ->get();
-
-
+        $note = DB::table('notes')
+            ->find($id);
         return response()
-            ->json($notes);
-
+            ->json($note);
 
     }
-    
+
     /**
      * Show the form for editing the specified resource.
      *

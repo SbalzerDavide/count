@@ -2,15 +2,17 @@
     <div class="folders">
       <h3>ecco tutte le cartelle</h3>
       <ul>
-        <li v-for="(folder, index) in folders" :key="index">
+        <li 
+        v-for="(folder, index) in folders" 
+        :key="index"
+        @click="openFolder(folder.id)"
+        >
           {{ folder.name }}
         </li>
       </ul>
       <button @click="addNewFolder">nuova cartella</button>
       <input type="text" v-model="nameFolder">
       <router-link :to="{name:'homeVue'}">Torna alla pagina principale</router-link>
-      <button @click="showFirstFolder">mostra prima cartella</button>
-
     </div>
 </template>
 
@@ -40,6 +42,13 @@
             )
         },
         methods:{
+            openFolder(index){
+              // invece di fare la chiamata direttamente passo i parametri alla rotta notes, la quale si preoccuperà di fare la chiamata di rete per ottenere i dati dal server
+              let parameter = {
+                idFolder: index
+              }
+              this.$router.push({ name: 'notes', params: parameter })
+            },
             addNewFolder(){
                 let vue = this;
                 console.log("add new folder");
@@ -50,31 +59,14 @@
                 .then(function (response) {
                     console.log(response);
                     vue.folders.push({
-                      name: vue.nameFolder,
-                    }
+                        name: vue.nameFolder,
+                      }
                     )
                 })
                 .catch(function (error) {
                     console.log(error);
                 });
             },
-            showFirstFolder(){
-              console.log("show first folder");
-              let vue = this;
-              console.log("add new folder");
-              axios.get(`http://127.0.0.1:8000/api/folder/1`)
-              .then(function (response) {
-                console.log(response);
-                vue.folders.push({
-                  name: vue.nameFolder,
-                  }
-                )
-              })
-              .catch(function (error) {
-                console.log(error);
-              });
-
-            }
         }
     }
 </script>

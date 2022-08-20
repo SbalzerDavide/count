@@ -23,3 +23,5 @@ Route::get('test', 'Api\TestController@index')->name('index.test');
 
 Route::resource('folder', 'Api\FolderController');
 
+Route::resource('note', 'Api\NoteController');
+
