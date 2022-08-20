@@ -7,7 +7,7 @@
     {{-- scheda conferma login effettuato --}}
     <div class="row justify-content-center">
         <div class="col-md-8">
-            <div class="card">
+            {{-- <div class="card">
                 <div class="card-header">{{ __('Dashboard') }}</div>
                 
                 <div class="card-body">
@@ -18,12 +18,11 @@
                     @endif
                     
                     {{ __('You are logged in!') }}
-                    {{-- ottengo i dati sul mio utente --}}
                     {{ Auth::user()->name }}
                     {{ Auth::user()->email }}
                     {{ Auth::id() }}
                 </div>
-            </div>
+            </div> --}}
         </div>
     </div>
     <span 

@@ -42,9 +42,6 @@
               // chiedi a quale cartella volgiono associare la nota e ricava da lì folder_id
               console.log("chiedi cartella");
             }
-            // axios.post('http://127.0.0.1:8000/api/note', {
-            //     title: "vue.title",
-            // })
             console.log(this.idFolder);
             axios.post('http://127.0.0.1:8000/api/note', {
                 title: vue.title,
@@ -55,10 +52,6 @@
             })
             .then(function (response) {
                 console.log(response);
-                // vue.notes.push({
-                //     title: vue.newNoteTitle,
-                //   }
-                // )
             })
             .catch(function (error) {
                 console.log(error);
@@ -68,14 +61,13 @@
             let parameter = {
               idFolder: this.idFolder
             }
-            // this.$router.push('/notes');
             this.$router.push({ name: 'notes', params: parameter })
           }
         }
     }
 </script>
 
-<style >
+<style>
   textarea{
     resize: none;
   }

@@ -22,23 +22,35 @@
             return{
               notes:[],
               idFolder: 0,
+              loader: false
             }
         },
-        created(){
-          this.idFolder = this.$route.params.idFolder;
-            let vue = this;
-             axios
-                .get('http://127.0.0.1:8000/api/note/', {
-                  params: {
-                    userInfo: window.userInfoEncode,
-                    idFolder: vue.idFolder
+        watch: {
+          loader() {
+            let showLoader = new CustomEvent('showLoader', 
+              { detail: {
+                      show: this.loader,
                   }
-                })
-                .then(response => {
-                    console.log(response.data);
-                    vue.notes = response.data;
-                }
-            )
+              });
+            dispatchEvent(showLoader)
+          }
+        },
+        created(){
+          this.loader = true;
+          this.idFolder = this.$route.params.idFolder;
+          let vue = this;
+          axios
+            .get('http://127.0.0.1:8000/api/note/', {
+              params: {
+                userInfo: window.userInfoEncode,
+                idFolder: vue.idFolder
+              }
+            })
+            .then(response => {
+              vue.notes = response.data;
+              vue.loader = false;
+            }
+          )
         },
         methods:{
             addNewNote(){

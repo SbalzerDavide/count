@@ -1,29 +1,11 @@
 <template>
     <div class="first">
-        <!-- <h2>sono il ponte tra il mondo di laravel e quello di Vue js</h2> -->
-
-        <!-- per andare alla rotta indicata -->
-        <!-- si mouve semplicemente ad una rotta interna a vue -->
-        <!-- nella visualizzazione va a sostituire quello che è dentro il file HomeVue.vue -->
-        <!-- <router-link :to="{name:'first'}">vai alla prima rotta con vue</router-link>
-        <router-link :to="{name:'folders'}">Visualizza tutte le tue cartelle</router-link> -->
-
-        <!-- qui viene randerizzato tutto quello che è indicato nel componente HomeVue
-        come impostato nel router per il percorso "/" -->
-        <router-view></router-view>
-
-
-        <!-- <div class="folders">
-            <h1>cartelle arrivate da DB:</h1>
-            <ul>
-                <li v-for="(folder, index) in folders" :key="index">
-                    {{ folder.name }}
-                </li>
-            </ul>
+        <div v-show="loader" class="loader-container">
+            <div class="loader">
+                <i class="fa-solid fa-circle-notch"></i>
+            </div>
         </div>
-
-        <button @click="addNewFolder">nuova cartella</button>
-        <input type="text" v-model="nameFolder"> -->
+        <router-view></router-view>
     </div>
 </template>
 
@@ -33,11 +15,13 @@
         name: "App",
         data(){
             return{
+                loader: false
                 // folders: [],
                 // nameFolder: "",
             }
         },
         created(){
+            let vue = this;
             // chiamata all'api example per ricavare folder
             let elementUser = document.getElementById("userInfo");
             window.userInfo = {
@@ -45,6 +29,12 @@
                 userName: elementUser.getAttribute("myUserName")
             }
             window.userInfoEncode = btoa(JSON.stringify(window.userInfo));
+            window.addEventListener("showLoader",(e)=>{
+                console.log(e);
+                console.log("evento ascoltato");
+                vue.loader = e.detail.show;
+            })
+
 
             
             // let vue = this;
@@ -75,3 +65,32 @@
         }
     }
 </script>
+<style lang="scss">
+    .loader-container{
+        position: absolute;
+        top: 0;
+        left: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100vw;
+        height: 100vh;
+        background: rgba(0,0,0,.1);
+        .loader{
+            color: #f15bb5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            font-size: 60px;
+            animation: load 1s linear infinite;
+        }
+    }
+    @keyframes load{
+        0% {transform: rotate(0);}
+        50% {transform: rotate(180deg);}
+        100% {transform: rotate(360deg);}
+    }
+</style>
+
+

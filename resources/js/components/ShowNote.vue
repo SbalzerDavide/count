@@ -22,18 +22,29 @@
               idNote: Number,
               idFolder: Number,
               note: {},
+              loader: false,
             }
         },
+        watch: {
+          loader() {
+            let showLoader = new CustomEvent('showLoader', 
+              { detail: {
+                      show: this.loader,
+                  }
+              });
+            dispatchEvent(showLoader)
+          }
+        },
         created(){
+          this.loader = true;
           this.idNote = this.$route.params.idNote;
           this.idFolder = this.$route.params.idFolder;
-          console.log("id note: ", this.idNote);
           let vue = this;
             axios
               .get(`http://127.0.0.1:8000/api/note/${vue.idNote}`)
               .then(response => {
-                console.log(response.data);
                 vue.note = response.data;
+                vue.loader = false;
               }
           )
         },
@@ -42,14 +53,13 @@
             let parameter = {
               idFolder: this.idFolder
             }
-            // this.$router.push('/notes');
             this.$router.push({ name: 'notes', params: parameter })
           }
         }
     }
 </script>
 
-<style >
+<style>
   textarea{
     resize: none;
   }

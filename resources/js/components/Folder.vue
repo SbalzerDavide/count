@@ -22,24 +22,36 @@
         name: "Folder",
         data(){
             return{
+              loader: false,
               folders:[],
               nameFolder: ""
             }
         },
-        created(){
-            // chiamata all'api example per ricavare folder
-            let vue = this;
-             axios
-                .get('http://127.0.0.1:8000/api/folder/', {
-                  params: {
-                    userInfo: window.userInfoEncode
+        watch: {
+          loader() {
+            let showLoader = new CustomEvent('showLoader', 
+              { detail: {
+                      show: this.loader,
                   }
-                })
-                .then(response => {
-                    console.log(response.data);
-                    vue.folders = response.data;
+              });
+            dispatchEvent(showLoader)
+          }
+        },
+        created(){
+          this.loader = true;
+            // chiamata all'api example per ricavare folder
+          let vue = this;
+            axios
+              .get('http://127.0.0.1:8000/api/folder/', {
+                params: {
+                  userInfo: window.userInfoEncode
                 }
-            )
+              })
+              .then(response => {
+                vue.folders = response.data;
+                vue.loader = false;
+              }
+          )
         },
         methods:{
             openFolder(index){
@@ -57,7 +69,6 @@
                     id: window.userInfo.userId
                 })
                 .then(function (response) {
-                    console.log(response);
                     vue.folders.push({
                         name: vue.nameFolder,
                       }
